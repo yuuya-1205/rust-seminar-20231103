@@ -20,7 +20,7 @@ struct Point(u32, u32);
 // これはNewTypeパターンと呼ばれるテクニック
 struct UserName(String);
 
-// 後述する列挙体
+// 後述する列挙型
 enum MyError {
     InvalidName,
 }
