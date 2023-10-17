@@ -26,41 +26,47 @@ enum List {
 }
 
 fn main() {
-    // 列挙体Aはたかだか長さ（深さ？）は２
+    // 列挙体Aの高さはたかだか２
     let x = A::Child(3, B::Nil);
     let y = A::Nil;
 
     // Box<List>型
+    //
     // データの実体はヒープに設置される
     // スタックにはそのヒープ領域へのポイントとメタデータが設置されるので、コンパイル時にサイズが確定する
-    // TODO: スライド用意する
     let l1 = Box::new(List::Nil);
 
-    // これはList型
+    // 注: これはList型
     let l2 = List::Cons(3, l1);
 
-    // 4 -> 10 -> 8
+    // 4 -> 10 -> 8 のリスト
     let l3 = List::Cons(
         4,
         Box::new(List::Cons(10, Box::new(List::Cons(8, Box::new(List::Nil))))),
     );
+    // コードが長くて読みづらいのでヘルパ関数を定義したり、マクロを書いたりする。
+    // マクロを自分で定義すれば、vec![4, 10, 8]のように list![4, 10, 8]と書ける。
 
-    // Listを辿る
-    let mut next;
-    match l3 {
-        List::Cons(n, l) => {
-            println!("{:?}", n);
-            next = l
-        }
-        List::Nil => return,
-    };
-    loop {
-        match *next {
-            List::Cons(n, l) => {
-                println!("{:?}", n);
-                next = l
+    // おまけ
+    //
+    // Listをラップする構造体を定義して、その構造体にIteratorトレイトを実装してやれば自作ListをIterateできる
+    let list_iter = ListIter(&l3);
+    for (i, value) in list_iter.into_iter().enumerate() {
+        println!("{}番目の要素は{}", i + 1, value);
+    }
+}
+
+struct ListIter<'a>(&'a List);
+impl<'a> Iterator for ListIter<'a> {
+    type Item = &'a i32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.0 {
+            List::Cons(inner, next) => {
+                self.0 = next;
+                Some(inner)
             }
-            List::Nil => break,
+            List::Nil => None,
         }
     }
 }
