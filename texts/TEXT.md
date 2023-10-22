@@ -1,7 +1,5 @@
 # Rust勉強会ネタだし
 
-# TOC
-
 自己紹介が要るのでは？
 
 - 所属
@@ -15,17 +13,17 @@
 
 ## パフォーマンス
 
-Rustは非常に高速でメモリ効率が高くランタイムやガベージコレクタがないため、パフォーマンス重視のサービスを実装できますし、組込み機器上で実行したり他の言語との調和も簡単にできます。
+> Rustは非常に高速でメモリ効率が高くランタイムやガベージコレクタがないため、パフォーマンス重視のサービスを実装できますし、組込み機器上で実行したり他の言語との調和も簡単にできます。
 
 ## 信頼性
 
-Rustの豊かな型システムと所有権モデルによりメモリ安全性とスレッド安全性が保証されます。さらに様々な種類のバグをコンパイル時に排除することが可能です。
+> Rustの豊かな型システムと所有権モデルによりメモリ安全性とスレッド安全性が保証されます。さらに様々な種類のバグをコンパイル時に排除することが可能です。
 
 ## 生産性
 
-Rustには優れたドキュメント、有用なエラーメッセージを備えた使いやすいコンパイラ、および統合されたパッケージマネージャとビルドツール、多数のエディタに対応するスマートな自動補完と型検査機能、自動フォーマッタといった一流のツール群が数多く揃っています。
+> Rustには優れたドキュメント、有用なエラーメッセージを備えた使いやすいコンパイラ、および統合されたパッケージマネージャとビルドツール、多数のエディタに対応するスマートな自動補完と型検査機能、自動フォーマッタといった一流のツール群が数多く揃っています。
 
-# 深堀り
+# もっとくだけた表現で説明してみる
 
 - 実行速度
     - ガベージコレクションがない
@@ -70,9 +68,20 @@ Rustには優れたドキュメント、有用なエラーメッセージを備�
     - `rustup self uninstall` でRustをアンインストールできます。この勉強会以降は絶対に絶対にRustは使わない人は消しておくといいかも。
 
 # Rustを採用した企業・プロジェクト
-
+- Linux
+    - [Linuxカーネルのバージョン6.1が公開、カーネル記述にRust言語を一部採用した最初のバージョン|CodeZine（コードジン）](https://codezine.jp/article/detail/17038)
+- Dropbox
+    - [DropboxがコアサービスをRustで書き換えた背景とは | Think IT（シンクイット）](https://thinkit.co.jp/article/17513)
+- Android
+    - [「ベアメタル」環境でもRustを採用 Googleが「Android 14」での取り組みを解説 - 窓の杜](https://forest.watch.impress.co.jp/docs/news/1538800.html)
+- Cloudflare
+    - [Cloudflare、NGINXに代えて自社開発のRust製HTTPプロキシ「Pingora」をグローバルCDNに採用。性能向上しつつCPUとメモリ消費を3分の1に － Publickey](https://www.publickey1.jp/blog/22/cloudflarenginxrusthttppingoracdncpu31.html)
 - Discord
+    - [なぜDiscordはGoからRustへ移行するのか - MISONLN41's Blog](https://misonln41.hateblo.jp/entry/2020/02/12/232853)
 - AWS Lambda
+    - [Firecracker – サーバーレスコンピューティングのための軽量な仮想化機能 | Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/firecracker-lightweight-virtualization-for-serverless-computing/)
+
+
 
 # 環境構築
 
@@ -87,14 +96,12 @@ Rustには優れたドキュメント、有用なエラーメッセージを備�
 
 # Hello, world
 
-1. ターミナルで`cargo init hello-world` とするとカレントディレクトリにhello-worldディレクトリが作成されます。これがプロジェクトの雛形です。このプロジェクトをVSCodeで開いてください。
+1. ターミナルで`cargo new hello-world` とするとカレントディレクトリにhello-worldディレクトリが作成されます。これがプロジェクトの雛形です。このプロジェクトをVSCodeで開いてください。
 2. `src/main.rs` が起点となるファイルです。このファイルのmain()関数が実行の起点です。
 3. VSCode内のターミナルから`cargo run` を実行してみてください。標準出力にビルド時のログと「Hello, world!」が表示されると思います。
-4. `target/debug/hello-world` がいまビルドされて作成された実行ファイルです。ターミナルで`./target/debug/hello-world` を実行して「Hello, world!」が出力されるのを確認しましょう。
+4. `target/debug/hello-world` がビルドされて作成された実行ファイルです。ターミナルで`./target/debug/hello-world` を実行して「Hello, world!」が出力されるのを確認しましょう。
 
-※実行ファイルの説明もいる？
-
-リリースビルドの話する
+`cargo run --release`とするとリリースビルドになり、最適化されて実行速度が上がります。その代わりビルド時間は伸びます。`--release`オプションをつけないとデバッグビルドになる。
 
 # cargoの使い方
 
@@ -161,29 +168,44 @@ Wikipediaより
 - Stop The World
     - Full GC(ガベージコレクション)が実行されたときに、すべてのアプリケーションスレッドが停止する事象。ユーザから見るとアプリケーションが停止しているように見える。
 
-# 基本的な型
+# 変数
+- 変数はデフォルトで不変（immutable）
 
-- i8, i16, i32, i64, u8…
-- usize, isize
-- boolean
+```rust
+let a = 4;
 
-# 文字・文字列
+// 可変にするには mut キーワードを使う
+let mut b = 10;
 
-- &str
-- String
-- char
+// これはシャドーイングなので mut は要らない
+a = 7;
+```
 
-# 配列・スライス・ベクタ
 
-サンプルコードも用意して説明する
+# 真偽値・数値
 
-# 構造体（struct）
+[サンプルコード](./examples/01_primitive.rs)
 
-サンプルコードも用意して説明する
+# タプル（tuple）
+
+[サンプルコード](./examples/02_tuple.rs)
+
+# 構造体(struct)
+
+[サンプルコード](./examples/03_struct.rs)
 
 # 列挙体（enum）
 
-サンプルコードも用意して説明する
+[サンプルコード](./examples/04_enum.rs)
+
+# 文字・文字列
+
+[サンプルコード](./examples/07_char_ref_str_string.rs)
+
+
+# 配列・スライス・ベクタ
+
+[サンプルコード](./examples/06_array_slice_vector.rs)
 
 # 参照
 
@@ -236,46 +258,181 @@ RustのマクロはCの`#define`ような単なる文字列の置換では無い
     - deriveマクロ
     - 属性マクロ
     - 関数マクロ
-
-## よく使われるマクロ
-
-- println!
-- format!
-- assert_eq!
-- vec!
-- derive
-- panic!
-- todo!
-- unimplemented!
-- tokio::main
-    - 自作もできるが凝ったものを作ると黒魔術
+- 凝ったものを作ると黒魔術しがち
     - RustのAST（抽象構文木: Abstract Syntax Tree）の知識が必要になる場合がある
 
-# 今日説明しなかったこと
+## よく使うマクロ
 
-- feature フラグ（クレート紹介のところで説明しそう）
-- バイナリクレートとライブラリクレート
-- unsafe
-- エディション
-- async trait
-- 他言語との連携（FFI）
-- デバッガ（LLDB）
-- マーカトレイト・Phantom Type
-- Web Assembly
-- const / static
-- プロファイル（`cargo benchmark`）
-- ドキュメント（`cargo doc`）
-- クロスコンパイル
-- CPU boundな場合のマルチスレッド
-- OSスレッドとグリーンスレッド
-- Nightly
-- orphan rule
-- lexical scope と non-lexical scope
-    
-    non-lexical scopeはRust 1.31.0から導入されたライフタイム推論アルゴリズム（※"推論アルゴリズム”はニュアンスが違う気がする
-    
-    [Non-Lexical Lifetimes - Qiita](https://qiita.com/_EnumHack/items/8b6ecdeb52e69a4ff384)
-    
+- println!()
+- format!()
+- assert_eq!()
+- vec![]
+- #[derive()]
+- panic!()
+- todo!()
+- unimplemented!()
+- #[tokio::main]
+
+## クレート
+いわゆるライブラリとかパッケージのことをRustではクレート（crate）と呼ぶ。
+プロジェクトにクレートを追加するにはCargo.tomlの`[dependencies]`にクレート名とバージョンを書く。
+
+```toml
+[dependencies]
+axum = "0.6.16"
+```
+
+featureフラグは、コンパイル時にコードの一部を有効または無効にするためのメカニズム。
+コードの条件付きコンパイルを可能にし、プロジェクト内で異なる機能セットを持つバージョンをビルドするのに役立つ。
+featureフラグは主に次の目的で使用さる：
+
+1. クロスプラットフォーム対応: 異なるプラットフォーム（例: Windows、Linux、macOS）でコードをビルドする場合、プラットフォーム固有の機能やライブラリの使用を切り替える
+1. コードのカスタマイズ: コードベース内で異なる機能セットを持つカスタムバージョンをビルドする際に、特定の機能をオンまたはオフにする
+1. テストとデバッグ: デバッグやテストのために特定の機能を有効または無効にする
+
+featureフラグを指定するときの記法は↓
+
+```toml
+sqlx = { version = "0.7.1", features = ["sqlite", "runtime-tokio-native-tls", "chrono"] }
+```
+
+そのクレートにどんなfeatureフラグがあるかは、ドキュメントかCargo.tomlを読めば書いてある。
+
+## 有名なクレートの紹介
+### serde
+シリアライズ・デシリアライズ。読み方は統一されておらず、セルデとかサーデとかシリデとか
+
+```rust
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let point = Point { x: 1, y: 2 };
+
+    // Convert the Point to a JSON string.
+    let serialized = serde_json::to_string(&point).unwrap();
+
+    // Prints serialized = {"x":1,"y":2}
+    println!("serialized = {}", serialized);
+
+    // Convert the JSON string back to a Point.
+    let deserialized: Point = serde_json::from_str(&serialized).unwrap();
+
+    // Prints deserialized = Point { x: 1, y: 2 }
+    println!("deserialized = {:?}", deserialized);
+}
+```
+
+### chrono
+日付・時刻・タイムスタンプ
+
+```rust
+use chrono::prelude::*;
+use chrono::offset::LocalResult;
+
+
+let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09:10:11Z`
+assert_eq!(dt, NaiveDate::from_ymd_opt(2014, 7, 8)?.and_hms_opt(9, 10, 11)?.and_local_timezone(Utc).unwrap());
+
+// July 8 is 188th day of the year 2014 (`o` for "ordinal")
+assert_eq!(dt, NaiveDate::from_yo_opt(2014, 189)?.and_hms_opt(9, 10, 11)?.and_utc());
+// July 8 is Tuesday in ISO week 28 of the year 2014.
+assert_eq!(dt, NaiveDate::from_isoywd_opt(2014, 28, Weekday::Tue)?.and_hms_opt(9, 10, 11)?.and_utc());
+
+let dt = NaiveDate::from_ymd_opt(2014, 7, 8)?.and_hms_milli_opt(9, 10, 11, 12)?.and_local_timezone(Utc).unwrap(); // `2014-07-08T09:10:11.012Z`
+assert_eq!(dt, NaiveDate::from_ymd_opt(2014, 7, 8)?.and_hms_micro_opt(9, 10, 11, 12_000)?.and_local_timezone(Utc).unwrap());
+assert_eq!(dt, NaiveDate::from_ymd_opt(2014, 7, 8)?.and_hms_nano_opt(9, 10, 11, 12_000_000)?.and_local_timezone(Utc).unwrap());
+
+// dynamic verification
+assert_eq!(Utc.with_ymd_and_hms(2014, 7, 8, 21, 15, 33),
+           LocalResult::Single(NaiveDate::from_ymd_opt(2014, 7, 8)?.and_hms_opt(21, 15, 33)?.and_utc()));
+assert_eq!(Utc.with_ymd_and_hms(2014, 7, 8, 80, 15, 33), LocalResult::None);
+assert_eq!(Utc.with_ymd_and_hms(2014, 7, 38, 21, 15, 33), LocalResult::None);
+
+// other time zone objects can be used to construct a local datetime.
+// obviously, `local_dt` is normally different from `dt`, but `fixed_dt` should be identical.
+let local_dt = Local.from_local_datetime(&NaiveDate::from_ymd_opt(2014, 7, 8).unwrap().and_hms_milli_opt(9, 10, 11, 12).unwrap()).unwrap();
+let fixed_dt = FixedOffset::east_opt(9 * 3600).unwrap().from_local_datetime(&NaiveDate::from_ymd_opt(2014, 7, 8).unwrap().and_hms_milli_opt(18, 10, 11, 12).unwrap()).unwrap();
+assert_eq!(dt, fixed_dt);
+```
+
+### reqwest
+
+Httpクライアント
+
+```rust
+let body = reqwest::get("https://www.rust-lang.org")
+    .await?
+    .text()
+    .await?;
+
+println!("body = {:?}", body);
+```
+
+### tokio
+デファクトスタンダードな非同期ランタイム
+
+```rust
+use mini_redis::{client, Result};
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    // Open a connection to the mini-redis address.
+    let mut client = client::connect("127.0.0.1:6379").await?;
+
+    // Set the key "hello" with value "world"
+    client.set("hello", "world".into()).await?;
+
+    // Get key "hello"
+    let result = client.get("hello").await?;
+
+    println!("got value from the server; result={:?}", result);
+
+    Ok(())
+}
+```
+
+### axum
+tokioと同じチームが作ったWebフレームワーク
+
+```rust
+use axum::{response::Html, routing::get, Router};
+
+#[tokio::main]
+async fn main() {
+    // build our application with a route
+    let app = Router::new().route("/", get(handler));
+
+    // run it
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+        .await
+        .unwrap();
+    println!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app).await.unwrap();
+}
+
+async fn handler() -> Html<&'static str> {
+    Html("<h1>Hello, World!</h1>")
+}
+```
+## クレートのドキュメントの読み方
+ほぼ全てのクレートのドキュメントが以下の形式で提供されます。
+
+[reqwest - Rust](https://docs.rs/reqwest/latest/reqwest/)
+
+![image](./medias/docrs.png)
+
+- ソースコードのリポジトリへのリンク
+- バージョンの切り替え
+- モジュール・構造体・トレイト・関数
+- 検索
+
+
 
 # Rust初心者に送る言葉
 
@@ -293,25 +450,40 @@ RustのマクロはCの`#define`ような単なる文字列の置換では無い
 # いまどきのエラーハンドリング
 
 - 近年のデファクトスタンダード化しつつあるanyhowとthiserrorクレートを組み合わせたエラーハンドリングを教える。それを使えば簡潔に書ける。
-
 - ファイル分割・モジュール分割
 - テスト
 - スレッド
     - データ競合を防ぐ仕組み
     - Arc<Mutex<T>>
-- プロジェクトにクレートを追加する方法
 - 非同期
     - Future, async, 非同期ランタイム
-- クレートのドキュメントの読み方
-- 有名なクレートの紹介
-    - serde（シリアライズ・デシリアライズ。読み方は統一されておらず、セルデとかサーデとかシリデとか）
-    - tokio（デファクトスタンダードな非同期ランタイム）
-    - chrono（日付・時刻・タイムスタンプ）
-    - axum（tokioと同じチームが作ったWebフレームワーク）
 - 簡単なAPI Server（GETのみ）
 - DBとつなぐ（docker-compose.ymlをこちらで用意する）
 - sqlx追加
 - tracing追加
+
+
+# 今日説明しなかったこと
+
+- バイナリクレートとライブラリクレート
+- unsafe
+- エディション
+- async trait
+- 他言語との連携（FFI）
+- デバッガ（LLDB）
+- マーカトレイト・Phantom Type
+- Web Assembly
+- const / static
+- プロファイル（`cargo benchmark`）
+- ドキュメント（`cargo doc`）
+- クロスコンパイル
+- CPU boundな場合のマルチスレッド
+- OSスレッドとグリーンスレッド
+- Nightly
+- orphan rule
+- lexical scope と non-lexical scope    
+    -  [Non-Lexical Lifetimes - Qiita](https://qiita.com/_EnumHack/items/8b6ecdeb52e69a4ff384)
+    
 
 簡易curlコマンドを作る
 
