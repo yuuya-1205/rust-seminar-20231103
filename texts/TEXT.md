@@ -9,7 +9,8 @@
     - 状態爆発との闘い
     - そのアンサーとしての形式手法。AWSも採用
 
-# なぜRustか from [https://www.rust-lang.org/ja](https://www.rust-lang.org/ja)
+# なぜRustか 
+[日本語版Rust公式サイト](https://www.rust-lang.org/ja) には以下の３つが挙げられている
 
 ## パフォーマンス
 
@@ -33,7 +34,7 @@
         - ある条件を満たした列挙型をnullableポインタ最適化
         - スタック領域でメモリ確保するように最適化
         - 静的ディスパッチ
-        - 参考：[https://blog.rust-jp.rs/tatsuya6502/posts/2019-12-zero-cost-abstraction/](https://blog.rust-jp.rs/tatsuya6502/posts/2019-12-zero-cost-abstraction/)
+            - 参考：[https://blog.rust-jp.rs/tatsuya6502/posts/2019-12-zero-cost-abstraction/](https://blog.rust-jp.rs/tatsuya6502/posts/2019-12-zero-cost-abstraction/)
 - 信頼性
     - コンパイル時に危険な動作がないかチェックしてくれる
         - nullポインタのデリファレンス
@@ -150,10 +151,20 @@ fn is_even(input: i32) -> bool {
 
 # スタック（stack）とヒープ（heap）
 
-イラスト付きで説明する
+## スタック領域（Stack）
 
-- スタックに積まれる。サイズが確定している必要あり。
-- ヒープ領域で確保される。アクセス遅い。
+- 高速で効率的なメモリ領域
+- ローカル変数や関数呼び出しの情報を格納
+- スタック上のデータはスコープを抜けると自動的に解放される
+- 固定サイズで制約があり、小規模なデータに適している
+
+## ヒープ領域（Heap）
+
+- 動的なメモリ割り当てに使用
+- メモリ確保・解放が手動で管理（ex. malloc/free）
+- 大容量のデータや動的データ構造に適している
+- 柔軟で容量の制約が少ない
+
 
 # ガベージコレクション
 
@@ -167,6 +178,9 @@ Wikipediaより
 > 
 - Stop The World
     - Full GC(ガベージコレクション)が実行されたときに、すべてのアプリケーションスレッドが停止する事象。ユーザから見るとアプリケーションが停止しているように見える。
+
+--- 
+
 
 # 変数
 - 変数はデフォルトで不変（immutable）
@@ -211,11 +225,19 @@ a = 7;
 
 [参照](https://www.notion.so/d2d638dcbc81423e8fb0d82949b0b873?pvs=21)
 
+# 所有権
+<!-- TODO: -->
+# 参照
+<!-- TODO: -->
 # ライフタイム
 
 [ライフタイム](https://www.notion.so/1bcafcd4ee0941beae08bb107776597c?pvs=21)
 
 # トレイト
+<!-- TODO: -->
+
+# クロージャ
+<!-- TODO: -->
 
 まだ完成してないサンプルコード
 
@@ -440,7 +462,7 @@ async fn handler() -> Html<&'static str> {
 
 - コード書く → Check On Save → エラーメッセージに従ってコード修正 → Check On Save → …
 のサイクルを回す
-- プログラムは動いてなんぼ。実行できなきゃ意味がない。最初から”完璧”を目指そうとしない。O
+- プログラムは動いてなんぼ。実行できなきゃ意味がない。最初から”完璧”を目指そうとしない。
 - 困ったら躊躇わずにcloneを使おう
     - 慣れてきたら参照を使ってメモリ効率の良いコードを目指そう。
 - 本番運用じゃなければ、Result, Optionから中身を取り出すときはunwrap() or expect()してしまおう
