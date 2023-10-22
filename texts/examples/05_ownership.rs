@@ -5,7 +5,6 @@ struct Color {
 }
 
 fn main() {
-    // TODO: Vecは登場してないので構造体を使ったコードにする
     let s = Color {
         r: 49,
         g: 78,

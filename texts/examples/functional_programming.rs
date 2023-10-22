@@ -21,7 +21,8 @@ struct UserPayload {
     name: Option<String>,
     age: Option<String>,
 }
-
+// TODO: collect::<Result<Vec<T>, E>>の紹介する
+// cf.   collect::<Vec<Result<T, E>>>
 fn get_users() -> Result<Vec<UserView>, MyError> {
     // 取得して
     // コマンド組み立てる
