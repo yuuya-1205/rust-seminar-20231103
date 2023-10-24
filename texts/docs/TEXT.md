@@ -447,7 +447,7 @@ async fn handler() -> Html<&'static str> {
 
 [reqwest - Rust](https://docs.rs/reqwest/latest/reqwest/)
 
-![image](./medias/docrs.png)
+![image](../medias/docrs.png)
 
 - ソースコードのリポジトリへのリンク
 - バージョンの切り替え
