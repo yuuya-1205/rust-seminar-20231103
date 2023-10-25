@@ -167,5 +167,109 @@ error[E0382]: use of moved value: `s1`
   not implement the `Copy` trait
     (注釈: ムーブが起きたのは、`s1`が`std::string::String`という
     `Copy`トレイトを実装していない型だからです)
-
 ```
+## クローン
+
+下図のように、String型のヒープデータのdeep copyが必要なときには`clone`を使います。
+
+![](https://doc.rust-jp.rs/book-ja/img/trpl04-03.svg)
+
+`clone`はこのように使います。
+
+```rust
+let s1 = String::from("hello");
+let s2 = s1.clone();
+
+println!("s1 = {}, s2 = {}", s1, s2);
+// これはコンパイル出来る!!
+```
+
+`clone`はヒープデータをdeep copyするので実行コストが高い処理であることを覚えておいてください。
+
+## コピー
+
+このコードを見てください。これはコンパイル出来るでしょうか？
+
+```rust
+let x = 5;
+let y = x;
+
+println!("x = {}, y = {}", x, y);
+```
+
+
+実はコンパイル出来ます。なぜでしょうか。
+
+変数`x`はi32型なのですが、i32型のようなプリミティブ型には`Copy`トレイトが実装されています。どういうことかというと、整数のようなコンパイル時に既知のサイズを持つ型は、スタック上にすっぽり保持されるので、 実際の値をコピーするのも高速だからです。
+
+整数型、bool、浮動小数点型、charなどに`Copy`トレイトが実装されています。
+
+Rustを習い始めたときはプリミティブ型を使うことが多いので、Rustの所有権システムについて誤ったメンタルモデルを構築してしまいがちなので気をつけましょう。構造体や列挙体などの型には`Copy`トレイトが実装されていません。
+
+## 所有権と関数
+
+関数に値を渡すことと、値を変数に代入することは似ています。関数に変数を渡すと、 代入のようにムーブやコピーされます。下のコードは変数がスコープに入ったり、 抜けたりする地点について注釈してある例です。
+
+```rust
+fn main() {
+    let s = String::from("hello");  // sがスコープに入る
+
+    takes_ownership(s);             // sの値が関数にムーブされ...
+                                    // ... ここではもう有効ではない
+
+    let x = 5;                      // xがスコープに入る
+
+    makes_copy(x);                  // xも関数にムーブされるが、
+                                    // i32はCopyなので、この後にxを使っても
+                                    // 大丈夫
+
+} // ここでxがスコープを抜け、sもスコープを抜ける。ただし、sの値はムーブされているので、何も特別なことは起こらない。
+  //
+
+fn takes_ownership(some_string: String) { // some_stringがスコープに入る。
+    println!("{}", some_string);
+} // ここでsome_stringがスコープを抜け、`drop`が呼ばれる。後ろ盾してたメモリが解放される。
+  // 
+
+fn makes_copy(some_integer: i32) { // some_integerがスコープに入る
+    println!("{}", some_integer);
+} // ここでsome_integerがスコープを抜ける。何も特別なことはない。
+```
+
+`takes_ownership`の呼び出し後にsを呼び出そうとすると、コンパイラは、コンパイルエラーを投げるでしょう。 これらの静的チェックにより、ミスを犯さないでいられます。`s`や`x`を使用するコードをmainに追加してみて、 どこで使えて、どこで使えないか試してみると理解が深まるでしょう。
+
+## 戻り値とスコープ
+
+値を返すことでも、所有権は移動します。
+
+```rust
+fn main() {
+    let s1 = gives_ownership();         // gives_ownershipは、戻り値をs1に
+                                        // ムーブする
+
+    let s2 = String::from("hello");     // s2がスコープに入る
+
+    let s3 = takes_and_gives_back(s2);  // s2はtakes_and_gives_backにムーブされ
+                                        // 戻り値もs3にムーブされる
+} // ここで、s3はスコープを抜け、ドロップされる。s2もスコープを抜けるが、ムーブされているので、
+  // 何も起きない。s1もスコープを抜け、ドロップされる。
+
+fn gives_ownership() -> String {             // gives_ownershipは、戻り値を
+                                             // 呼び出した関数にムーブする
+
+    let some_string = String::from("hello"); // some_stringがスコープに入る
+
+    some_string                              // some_stringが返され、呼び出し元関数に
+                                             // ムーブされる
+}
+
+// takes_and_gives_backは、Stringを一つ受け取り、返す。
+fn takes_and_gives_back(a_string: String) -> String { // a_stringがスコープに入る。
+
+    a_string  // a_stringが返され、呼び出し元関数にムーブされる
+}
+```
+
+所有権を取り、またその所有権を戻す、ということを全ての関数でしていたら、ちょっとめんどくさいですね。 関数に値は使わせるものの**所有権を取らないようにさせる**にはどうするべきでしょうか。
+
+それを実現するには**参照**を使います。
