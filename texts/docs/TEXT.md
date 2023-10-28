@@ -273,7 +273,6 @@ fn main() {
 
 [サンプルコード](./examples/06_array_slice_vector.rs)
 
-
 # 所有権
 
 [所有権](./ownership.md)
@@ -282,7 +281,6 @@ fn main() {
 
 [参照と借用](./reference_and_borrow.md)
 
-<!-- TODO: -->
 # ライフタイム
 
 [ライフタイム](./lifetime.md)
@@ -520,6 +518,14 @@ async fn handler() -> Html<&'static str> {
 - 検索
 
 
+## ファイル分割・モジュール分割
+
+
+[サンプルコード](../examples/module-sample/src/main.rs)
+
+mod.rs, `extern crate`キーワードを使う方法は古い方式です。いまからRustを始める人は使わないようにしましょう。
+- [パスとモジュールシステムへの変更 > さようなら、extern crate - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89extern-crate)
+- [パスとモジュールシステムへの変更 > さようなら、mod.rs - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89modrs)
 
 # Rust初心者に送る言葉
 
@@ -537,7 +543,6 @@ async fn handler() -> Html<&'static str> {
 # いまどきのエラーハンドリング
 
 - 近年のデファクトスタンダード化しつつあるanyhowとthiserrorクレートを組み合わせたエラーハンドリングを教える。それを使えば簡潔に書ける。
-- ファイル分割・モジュール分割
 - テスト
 - スレッド
     - データ競合を防ぐ仕組み
@@ -547,7 +552,6 @@ async fn handler() -> Html<&'static str> {
 - 簡単なAPI Server（GETのみ）
 - DBとつなぐ（docker-compose.ymlをこちらで用意する）
 - sqlx追加
-- tracing追加
 
 
 # 今日説明しなかったこと
