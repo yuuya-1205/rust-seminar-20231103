@@ -1,13 +1,8 @@
 # Rust勉強会ネタだし
 
-自己紹介が要るのでは？
+# 自己紹介
 
-- 所属
-- こんぶくんとの関係
-- Rustとの出会い
-    - 安全なアプリケーションであると確信できるようになるには
-    - 状態爆発との闘い
-    - そのアンサーとしての形式手法。AWSも採用
+[自己紹介](./self_introduce.md)
 
 # なぜRustか 
 [日本語版Rust公式サイト](https://www.rust-lang.org/ja) には以下の３つが挙げられている
@@ -381,6 +376,10 @@ sqlx = { version = "0.7.1", features = ["sqlite", "runtime-tokio-native-tls", "c
 ### serde
 シリアライズ・デシリアライズ。読み方は統一されておらず、セルデとかサーデとかシリデとか
 
+[serde - Rust](https://docs.rs/serde/latest/serde/)
+
+[Overview · Serde](https://serde.rs/)
+
 ```rust
 use serde::{Serialize, Deserialize};
 
@@ -409,6 +408,8 @@ fn main() {
 
 ### chrono
 日付・時刻・タイムスタンプ
+
+[chrono - Rust](https://docs.rs/chrono/latest/chrono/)
 
 ```rust
 use chrono::prelude::*;
@@ -444,6 +445,8 @@ assert_eq!(dt, fixed_dt);
 
 Httpクライアント
 
+[reqwest - Rust](https://docs.rs/reqwest/latest/reqwest/)
+
 ```rust
 let body = reqwest::get("https://www.rust-lang.org")
     .await?
@@ -456,6 +459,9 @@ println!("body = {:?}", body);
 ### tokio
 デファクトスタンダードな非同期ランタイム
 
+[tokio - Rust](https://docs.rs/tokio/latest/tokio/)
+
+[Tutorial | Tokio - An asynchronous Rust runtime](https://tokio.rs/tokio/tutorial)
 ```rust
 use mini_redis::{client, Result};
 
@@ -478,6 +484,8 @@ async fn main() -> Result<()> {
 
 ### axum
 tokioと同じチームが作ったWebフレームワーク
+
+[axum - Rust](https://docs.rs/axum/latest/axum/)
 
 ```rust
 use axum::{response::Html, routing::get, Router};
