@@ -195,6 +195,63 @@ let mut b = 10;
 a = 7;
 ```
 
+# 関数
+
+Rustの関数と変数の命名規則はスネークケースです。関数定義は`fn`キーワードで始まり、関数名の後に丸括弧の組が続きます。
+定義した関数は、名前に丸かっこの組を続けることで呼び出すことができます。 
+
+```rust
+fn main() {
+    println!("Hello, world!");
+
+    another_function();
+}
+
+fn another_function() {
+    println!("Another function.");  // 別の関数
+}
+```
+
+次は引数ありのパターンです。
+another_functionの宣言には、`x`という名前の仮引数があります。`x`の型はi32です。
+
+```rust
+fn main() {
+    another_function(5);
+}
+
+fn another_function(x: i32) {
+    println!("The value of x is: {}", x);   // xの値は{}です
+}
+```
+
+複数の引数を持たせたい場合は、カンマで区切ります。
+
+```rust
+fn main() {
+    print_labeled_measurement(5, 'h');
+}
+
+fn print_labeled_measurement(value: i32, unit_label: char) {
+    println!("The measurement is: {}{}", value, unit_label);
+}
+```
+
+最後に戻り値のあるパターンです。
+
+戻り値は矢印(->)の後に型を描きます。
+
+```rust
+fn five() -> i32 {
+    5
+}
+
+fn main() {
+    let x = five();
+
+    println!("The value of x is: {}", x);
+}
+```
 
 # 真偽値・数値
 
@@ -221,17 +278,19 @@ a = 7;
 
 [サンプルコード](./examples/06_array_slice_vector.rs)
 
-# 参照
-
-[参照](https://www.notion.so/d2d638dcbc81423e8fb0d82949b0b873?pvs=21)
 
 # 所有権
-<!-- TODO: -->
-# 参照
+
+[所有権](./ownership.md)
+
+# 参照と借用
+
+[参照と借用](./reference_and_borrow.md)
+
 <!-- TODO: -->
 # ライフタイム
 
-[ライフタイム](https://www.notion.so/1bcafcd4ee0941beae08bb107776597c?pvs=21)
+[ライフタイム](./lifetime.md)
 
 # トレイト
 <!-- TODO: -->
@@ -242,8 +301,6 @@ a = 7;
 まだ完成してないサンプルコード
 
 - [ ]  functional_programing
-- [ ]  ownership
-- [ ]  lifetime
     - 所有権・ライフタイム・借用
         - 『Rust The Book』
         - 『プログラミングRust』pp 98,99
