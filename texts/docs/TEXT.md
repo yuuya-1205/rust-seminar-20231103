@@ -286,29 +286,48 @@ fn main() {
 [ライフタイム](./lifetime.md)
 
 # トレイト
-<!-- TODO: -->
+他の言語ではインタフェースなどと呼ばれる機能。
+
+[サンプルコード１](../examples/trait_1.rs)
+[サンプルコード２](../examples/trait_2.rs)
+
+
+関数を定義するとき、トレイトは型ではないのでそのままでは使えない。
+トレイトを型化する方法が２種類ある。
+
+- 静的ディスパッチ（static dispatch）
+- 動的ディスパッチ（dynamic dispatch）
+
+
+静的ディスパッチは
+
+```rust
+fn notify(item: &impl std::fmt::Display) {
+    println!("Breaking news! {}", item);
+}
+```
+
+この構文は↓のシンタックスシュガーになっている。
+```rust
+fn notify<T: std::fmt::Display>(item: T) {
+    println!("Breaking news! {}", item);
+}
+```
+要求されるトレイトが複数の場合や、複数の引数が同じトレイト境界を持つときはwhereを使う。
+
+```rust
+fn notify<T: std::fmt::Display>(a: T, b: T) {
+    // skip
+}
+
+fn notify<T: >
+```
+
 
 # クロージャ
-<!-- TODO: -->
+[サンプルコード](../examples/closure.rs)
 
-まだ完成してないサンプルコード
 
-- [ ]  functional_programing
-    - 所有権・ライフタイム・借用
-        - 『Rust The Book』
-        - 『プログラミングRust』pp 98,99
-        - コンパイルエラーメッセージの読み方
-        
-        ```rust
-        let s = vec!["a".to_string(), "b".to_string(), "c".to_string()];
-        let t = s;
-        let u = s;
-        ```
-        
-        - ‘a （tick aと発音する）
-        - 再帰リストとBox<T>
-        - 『プログラミングRust』pp 102,103
-        - 
 - [ ]  trait
     - トレイト
         - `型が実装すべきメソッドを列挙して宣言したもの`
@@ -316,8 +335,6 @@ fn main() {
             - トレイトオブジェクト
         - コンパイルエラーに従って実装していく
         - 『コンセプトから理解するRust』
-- [ ]  closure
-    - 説明軽くで十分。型はなくて、３つのトレイトってことだけ伝える。あとmove
 
 # マクロ
 
@@ -344,6 +361,9 @@ RustのマクロはCの`#define`ような単なる文字列の置換では無い
 - todo!()
 - unimplemented!()
 - #[tokio::main]
+
+## テスト
+[サンプルプロジェクト](../../examples/test-sample)
 
 ## クレート
 いわゆるライブラリとかパッケージのことをRustではクレート（crate）と呼ぶ。
@@ -505,6 +525,90 @@ async fn handler() -> Html<&'static str> {
     Html("<h1>Hello, World!</h1>")
 }
 ```
+
+## sqlx
+ORM（厳密にはORMではない）。SQLを直接書く。コンパイル時にコード内のSQLの構文チェック（テーブルの有無や型のチェックなど）をしてくれる。
+
+[sqlx - Rust](https://docs.rs/sqlx/latest/sqlx/)
+
+
+```rust
+#[derive(sqlx::FromRow)]
+struct User { name: String, id: i64 }
+
+let mut stream = sqlx::query_as::<_, User>("SELECT * FROM users WHERE email = ? OR name = ?")
+    .bind(user_email)
+    .bind(user_name)
+    .fetch(&mut conn);
+```
+
+```rust
+let countries = sqlx::query!(
+        "
+SELECT country, COUNT(*) as count
+FROM users
+GROUP BY country
+WHERE organization = ?
+        ",
+        organization
+    )
+    .fetch_all(&pool) // -> Vec<{ country: String, count: i64 }>
+    .await?;
+
+// countries[0].country
+// countries[0].count
+```
+
+## diesel
+
+ORM
+
+[diesel - Rust](https://docs.rs/diesel/latest/diesel/)
+
+diesel CLIツールがマイグレーションファイルを読み取って以下のようなマクロが自動生成される
+
+```rust
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
+    posts (id) {
+        id -> Int4,
+        title -> Varchar,
+        body -> Text,
+        published -> Bool,
+    }
+}
+```
+
+すると、このような感じでDBにアクセスするコードが書ける。
+
+```rust
+use self::models::*;
+use diesel::prelude::*;
+use diesel_demo::*;
+
+fn main() {
+    use self::schema::posts::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    // 「SELECT * FROM posts where polished = true LIMIT 5;」相当
+    let results = posts
+        .filter(published.eq(true))
+        .limit(5)
+        .select(Post::as_select())
+        .load(connection)
+        .expect("Error loading posts");
+
+    println!("Displaying {} posts", results.len());
+    for post in results {
+        println!("{}", post.title);
+        println!("-----------\n");
+        println!("{}", post.body);
+    }
+}
+```
+
 ## クレートのドキュメントの読み方
 ほぼ全てのクレートのドキュメントが以下の形式で提供されます。
 
@@ -518,6 +622,18 @@ async fn handler() -> Html<&'static str> {
 - 検索
 
 
+## エラーハンドリング
+
+Rustでは`Option<T>`や`Result<T, E>`といった型が頻出する。`?`演算子というものが存在し、これを使うOption::NoneやResult::Errを早期リターンするとコードの見通しが良くなります。
+
+<!-- TODO: -->
+以下3つのソースコードを用意
+
+- ?なしパターン
+- ?ありパターン
+- thiserror + anyhowパターン
+
+
 ## ファイル分割・モジュール分割
 
 
@@ -526,6 +642,20 @@ async fn handler() -> Html<&'static str> {
 mod.rs, `extern crate`キーワードを使う方法は古い方式です。いまからRustを始める人は使わないようにしましょう。
 - [パスとモジュールシステムへの変更 > さようなら、extern crate - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89extern-crate)
 - [パスとモジュールシステムへの変更 > さようなら、mod.rs - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89modrs)
+
+## マルチスレッド
+<!-- TODO: -->
+
+データ競合を防いでくれる
+複数のスレッドから書き込みできる型 `Arc<Mutex<T>>`
+
+## 非同期
+<!-- TODO: -->
+Futureトレイト
+Rustには非同期ランタイムが含まれない。そのことのメリット
+非同期ランタイム紹介
+tokioのサンプルコード
+
 
 # Rust初心者に送る言葉
 
@@ -540,15 +670,8 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
     - 慣れてきたらエラーハンドリングしよう
 - （ある程度は）clippyがよりRustっぽい書き方を提案してくれる
 
-# いまどきのエラーハンドリング
+## APIサーバー雛形
 
-- 近年のデファクトスタンダード化しつつあるanyhowとthiserrorクレートを組み合わせたエラーハンドリングを教える。それを使えば簡潔に書ける。
-- テスト
-- スレッド
-    - データ競合を防ぐ仕組み
-    - Arc<Mutex<T>>
-- 非同期
-    - Future, async, 非同期ランタイム
 - 簡単なAPI Server（GETのみ）
 - DBとつなぐ（docker-compose.ymlをこちらで用意する）
 - sqlx追加
@@ -585,6 +708,11 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
 - reqwest, clap クレートを使う
 - 余裕があれば`-H “KEY:VALUE”` でヘッダを追加したり、クエリパラメータに対応したり、エラーハンドリングを追加してみる。
 - `-v`や`-vvv`相当のことがしたいなら、reqwestより低レイヤーのhyperを使わないできないと思われる。
+
+時間余ったらTUIアプリに挑戦するのも面白いかも。
+
+[ratatui-org/ratatui: Rust library that's all about cooking up terminal user interfaces (TUIs)](https://github.com/ratatui-org/ratatui)
+
 - axumでアプリ作る
     - ヘッダ・ペイロード・クエリパラメータ・メソッド・パスを標準出力
     - GETはhello worldを返すだけ
