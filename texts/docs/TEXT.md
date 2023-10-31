@@ -666,8 +666,10 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
 - [パスとモジュールシステムへの変更 > さようなら、extern crate - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89extern-crate)
 - [パスとモジュールシステムへの変更 > さようなら、mod.rs - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89modrs)
 
-## マルチスレッド
+## スレッド
 <!-- TODO: -->
+
+[スレッド](./threads.md)
 
 データ競合を防いでくれる
 複数のスレッドから書き込みできる型 `Arc<Mutex<T>>`
