@@ -386,7 +386,7 @@ RustのマクロはCの`#define`ような単なる文字列の置換では無い
 - #[tokio::main]
 
 ## テスト
-[サンプルプロジェクト](../../examples/test-sample)
+[サンプルプロジェクト](../../projects/test-sample)
 
 ## クレート
 いわゆるライブラリとかパッケージのことをRustではクレート（crate）と呼ぶ。
@@ -660,7 +660,7 @@ Rustでは`Option<T>`や`Result<T, E>`といった型が頻出する。`?`演算
 ## ファイル分割・モジュール分割
 
 
-[サンプルコード](../examples/module-sample/src/main.rs)
+[サンプルコード](../projects/module-sample/src/main.rs)
 
 mod.rs, `extern crate`キーワードを使う方法は古い方式です。いまからRustを始める人は使わないようにしましょう。
 - [パスとモジュールシステムへの変更 > さようなら、extern crate - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89extern-crate)

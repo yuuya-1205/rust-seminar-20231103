@@ -73,7 +73,7 @@ println!("{}", s); // これは`hello, world!`と出力する
 ### ちょっと寄り道
 
 実行ファイルに文字列がハードコードされていることを確認してみる。
-examplesに`static-text-hard-coded`というサンプルプロジェクトがある。コードはこれだけ↓。
+projectsに`static-text-hard-coded`というサンプルプロジェクトがある。コードはこれだけ↓。
 
 ```rust
 fn main() {

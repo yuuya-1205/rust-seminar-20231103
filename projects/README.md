@@ -1,4 +1,4 @@
-# examples
+# projects
 ## ローカルで実行
 
 ```sh
