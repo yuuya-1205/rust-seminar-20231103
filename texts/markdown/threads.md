@@ -208,5 +208,46 @@ fn main() {
 ```
 
 ## スレッド間での共有データの書き込み
+スレッド間で共有するデータに書き込みをしたい場合はMutexをArcに入れて使います。
+Mutexは"mutual exclusion"(相互排他)の省略形です。
+Mutexで包んだデータにアクセスするには、ロックを獲得する必要があります。
 
+Mutexを正しく使うには以下の２つの規則を守る必要があります。
+
+1. データを使用する前にロックの獲得を試みなければならない。
+1. Mutexが死守しているデータの使用が終わったら、他のスレッドがロックを獲得できるように、 データをアンロックしなければならない。
+
+Mutexの管理は、正しく行うのに著しく技巧を要することがあるが、Rustの型システムと所有権規則のおかげでロックとアンロックをおかしくすることはありません。
+
+[examples/thread_6.rs](../examples/thread_6.rs)
+
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+
+        // moveキーワードでスレッドはcounterの所有権を奪う
+        let handle = thread::spawn(move || {
+            // lock()はResultを返す。
+            // ロックを取得して中の値（i32）への書き込み権限を得る
+            let mut num = counter.lock().unwrap();
+
+            *num += 1;
+        }); // numがスコープ外に出ると自動でロックを解除する。解除のし忘れ防止！
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
+}
+``````
 
