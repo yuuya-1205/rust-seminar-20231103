@@ -1100,6 +1100,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "simple-tcp-echo-server"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
 name = "slab"
 version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"

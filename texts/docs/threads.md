@@ -174,3 +174,39 @@ fn main() {
     handle.join().unwrap();
 }
 ```
+
+## スレッド間での共有データの参照
+
+スレッド間でデータを共有したい場合は`std::sync::Arc`を使います。
+Arc（Atomic Reference Counted）はスレッドセーフなリファレンスカウンタポインタで状態を共有できます。
+
+読み込みしかしないのであれば、Arcで包まずに単純にcloneしても動くのだが、ヒープ領域のデータのコピーが発生するので速度は遅くなるし、メモリ使用量も増える。
+
+[examples/thread_5.rs](../examples/thread_5.rs)
+
+
+```rust
+use std::sync::Arc;
+use std::thread;
+
+fn main() {
+    let v = Arc::new(vec![1, 1, 2, 3, 5]);
+
+    let mut handles = vec![];
+    for i in 0..v.len() {
+        let v = v.clone();
+        let handle = thread::spawn(move || {
+            println!("Thread ID: {}, v[{}] = {}", i, i, v[i]);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+}
+```
+
+## スレッド間での共有データの書き込み
+
+

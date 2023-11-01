@@ -67,9 +67,4 @@ fn main() {
 
     // eat()は変数birdの所有権を奪うので、以下のコードはコンパイルエラー
     // bird.eat();
-
-    // TODO:
-    // 動的ディスパッチ
-    // 静的ディスパッチ
-    // [安定化間近！Rustのimpl Traitを今こそ理解する - 簡潔なQ](https://qnighy.hatenablog.com/entry/2018/01/28/220000)
 }
