@@ -247,28 +247,28 @@ fn main() {
 
 # 真偽値・数値
 
-[サンプルコード](./examples/01_primitive.rs)
+[サンプルコード](../examples/01_primitive.rs)
 
 # タプル（tuple）
 
-[サンプルコード](./examples/02_tuple.rs)
+[サンプルコード](../examples/02_tuple.rs)
 
 # 構造体(struct)
 
-[サンプルコード](./examples/03_struct.rs)
+[サンプルコード](../examples/03_struct.rs)
 
 # 列挙体（enum）
 
-[サンプルコード](./examples/04_enum.rs)
+[サンプルコード](../examples/04_enum.rs)
 
 # 文字・文字列
 
-[サンプルコード](./examples/07_char_ref_str_string.rs)
+[サンプルコード](../examples/07_char_ref_str_string.rs)
 
 
 # 配列・スライス・ベクタ
 
-[サンプルコード](./examples/06_array_slice_vector.rs)
+[サンプルコード](../examples/06_array_slice_vector.rs)
 
 # 所有権
 
