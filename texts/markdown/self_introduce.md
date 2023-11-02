@@ -14,7 +14,6 @@
 
 - 形式仕様記述
   - VDM-SL, VDM++, Z
-- 形式検証
 - モデル検査
   - TLA+, Alloy, SPIN
 
