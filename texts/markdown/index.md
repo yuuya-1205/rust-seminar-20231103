@@ -1,7 +1,4 @@
-# Rust勉強会ネタだし
-
 # 自己紹介
-
 [自己紹介](./self_introduce.md)
 
 # なぜRustか 
@@ -350,15 +347,6 @@ fn notify<T: >
 # クロージャ
 [サンプルコード](../examples/closure.rs)
 
-
-- [ ]  trait
-    - トレイト
-        - `型が実装すべきメソッドを列挙して宣言したもの`
-        - オブジェクト指向言語で用いられるクラスによる抽象化との比較
-            - トレイトオブジェクト
-        - コンパイルエラーに従って実装していく
-        - 『コンセプトから理解するRust』
-
 # マクロ
 
 println!はマクロ。Do you know メタプログラミング？
@@ -647,19 +635,69 @@ fn main() {
 
 ## エラーハンドリング
 
-Rustでは`Option<T>`や`Result<T, E>`といった型が頻出する。`?`演算子というものが存在し、これを使うOption::NoneやResult::Errを早期リターンするとコードの見通しが良くなります。
+Rustでは`Option<T>`や`Result<T, E>`といった型が頻出する。Rustには`?`演算子というものが存在し、これを使ってOption::NoneやResult::Errを早期リターンするとコードの見通しが良くなります。
 
-<!-- TODO: -->
-以下3つのソースコードを用意
 
-- ?なしパターン
-- ?ありパターン
-- thiserror + anyhowパターン
+- [?なしパターン](../examples/error_handling_1.rs)
+- [?ありパターン](../examples/error_handling_2.rs)
 
+thiserrorクレートとanyhowクレートを組み合わせたエラーハンドリングが近年デファクトスタンダード化しつつあります。
+
+thiserrorクレートを使うとDisplay, Error, Fromトレイトをシンプルに実装できます。
+
+anyhowクレートを使うのは以下のような理由があります。
+
+- 他のエラー型から`anyhow::Error`への変換が容易
+- エラーの階層化
+- `Backtrace``
+- `anyhow!`, `ensure!`, `bail!`, `ensure!`等の便利マクロ
+
+引用: [Rust/AnyhowのTips](https://zenn.dev/yukinarit/articles/b39cd42820f29e#%E3%81%AA%E3%81%9Canyhow%E3%82%92%E4%BD%BF%E3%81%86%E3%81%AE%E3%81%8B)
+
+thiserrorとanyhowを使って書き換えたコードがこちらです。
+
+[thiserror + anyhow](../../projects/modern-error-handling/)
+
+```rust
+#[derive(Debug, thiserror::Error)]
+enum MyError {
+    #[error("ここにエラーメッセージを書ける")]
+    IOError(#[from] std::io::Error),
+    #[error("'='が見つかりませんでした")]
+    NotFound,
+}
+
+// 戻り値がanyhowのResultになった
+fn get_first_cell(path: &str) -> anyhow::Result<String> {
+    let content = std::fs::read_to_string(path).map_err(|e| MyError::IOError(e))?;
+    let cell = content.split_once(',').ok_or_else(|| MyError::NotFound)?;
+
+    return Ok(String::from(cell.0));
+}
+
+fn main() {
+    let result = get_first_cell("/path/hoge.csv");
+    match result {
+        Ok(cell) => {
+            println!("first cell: {}", cell)
+        }
+        Err(e) => {
+            println!("Error: {:?}", e);
+        }
+    }
+}
+```
+
+これを実行します。指定したパスにファイルが存在しないので`std::fs::read_to_string()`でエラーになります。
+
+```
+Error: ここにエラーメッセージを書ける
+
+Caused by:
+    No such file or directory (os error 2)
+```
 
 ## ファイル分割・モジュール分割
-
-
 [サンプルコード](../projects/module-sample/src/main.rs)
 
 mod.rs, `extern crate`キーワードを使う方法は古い方式です。いまからRustを始める人は使わないようにしましょう。
@@ -667,20 +705,12 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
 - [パスとモジュールシステムへの変更 > さようなら、mod.rs - エディションガイド](https://doc.rust-jp.rs/edition-guide/rust-2018/path-changes.html#%E3%81%95%E3%82%88%E3%81%86%E3%81%AA%E3%82%89modrs)
 
 ## スレッド
-<!-- TODO: -->
-
 [スレッド](./threads.md)
 
-データ競合を防いでくれる
-複数のスレッドから書き込みできる型 `Arc<Mutex<T>>`
-
 ## 非同期処理
-
 [非同期処理](./async.md)
 
-
 # Rust初心者に送る言葉
-
 ## まずはコンパイルが通るコードを書こう
 
 - コード書く → Check On Save → エラーメッセージに従ってコード修正 → Check On Save → …
@@ -741,14 +771,3 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
     - POSTはリクエストのフォーマットを判定してからオウム返し
         - application/json ?
 
-# 勉強会のフォーマット
-
-資料はGitHub上で公開
-
-スライドはあまり枚数多くないと思う
-
-マークダウンで教科書を書く
-
-Zero To Productionを参考に
-
-Windowsどうする
