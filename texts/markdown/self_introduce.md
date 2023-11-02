@@ -47,7 +47,7 @@ $$\forall i. 0\le i  \lt n-1 \land v[i] = x \Rightarrow v[i+1] = y$$
 
 「配列`v`の中で値`x`の後ろに`y`がある場合はtrue、ない場合はfalseを返す関数を作ってください」の別の形式的な記述もありうる。例えば、
 
-$$\forall i. 0 \le i \lt n-1 \land v[i] = x \Rightarrow \exist j. i \lt j \lt n \land v[j] = y $$
+$$\forall i. 0 \le i \lt n-1 \land v[i] = x \Rightarrow \exists j. i \lt j \lt n \land v[j] = y $$
 
 
 ## 自作のモデル検査器
