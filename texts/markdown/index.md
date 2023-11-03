@@ -101,6 +101,7 @@ Wikipediaより
 
 --- 
 
+ここからRustの文法紹介
 
 # 変数
 - 変数はデフォルトで不変（immutable）
