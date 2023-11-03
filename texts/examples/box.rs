@@ -70,3 +70,18 @@ impl<'a> Iterator for ListIter<'a> {
         }
     }
 }
+
+fn notify<T: std::fmt::Display + std::fmt::Debug>(item: T) {}
+
+fn notify2<T>(item: T)
+where
+    T: std::fmt::Display + std::fmt::Debug,
+{
+}
+
+fn notify3<'a, T, U>(a: T, b: &'a U)
+where
+    T: IntoIterator,
+    U: std::fmt::Display,
+{
+}

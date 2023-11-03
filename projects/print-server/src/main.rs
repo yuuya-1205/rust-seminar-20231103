@@ -1,16 +1,9 @@
-//! Run with
-//!
-//! ```not_rust
-//! cargo run -p example-print-request-response
-//! ```
-//!
-//!
 use axum::{
     body::{Body, Bytes},
     http::StatusCode,
     middleware::{self, Next},
     response::{IntoResponse, Response},
-    routing::post,
+    routing::{get, post},
     Router,
 };
 use http::Request;
@@ -21,7 +14,8 @@ async fn main() {
     setup_tracing();
 
     let app = Router::new()
-        .route("/", post(|| async move { "Hello from `POST /`" }))
+        .route("/", post(|| async move { "Hello from `POST /`\n" }))
+        .route("/", get(|| async move { "Hello from `GET /`\n" }))
         .layer(middleware::from_fn(print_request_response));
 
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())

@@ -224,7 +224,7 @@ fn main() {
 - 動的ディスパッチ（dynamic dispatch）
 
 
-静的ディスパッチは
+静的ディスパッチは`impl`キーワードを使ってこのように書きます。
 
 ```rust
 fn notify(item: &impl std::fmt::Display) {
@@ -234,18 +234,34 @@ fn notify(item: &impl std::fmt::Display) {
 
 この構文は↓のシンタックスシュガーになっている。
 ```rust
-fn notify<T: std::fmt::Display>(item: T) {
+fn notify<T: std::fmt::Display>(item: &T) {
     println!("Breaking news! {}", item);
 }
 ```
-要求されるトレイトが複数の場合や、複数の引数が同じトレイト境界を持つときはwhereを使う。
+
+バリエーション
 
 ```rust
-fn notify<T: std::fmt::Display>(a: T, b: T) {
+// Tのトレイト境界が複数のパターン
+fn notify<T: std::fmt::Display + std::fmt::Debug>(a: T, b: T) {
     // skip
 }
 
-fn notify<T: >
+// ↑をwhereで書いたパターン
+fn notify<T>(a: T, b: T)
+where
+    T: std::fmt::Display + std::fmt::Debug,
+{
+    // skip
+}
+
+// 型引数が複数 & ライフタイムパラメータを含むパターン
+fn notify3<'a, T, U>(a: T, b: &'a U)
+where
+    T: IntoIterator,
+    U: std::fmt::Display,
+{
+}
 ```
 
 静的ディスパッチと動的ディスパッチの利点・欠点は以下の通りです。
@@ -276,30 +292,7 @@ fn notify<T: >
 [サンプルコード](../examples/closure.rs)
 
 # マクロ
-
-println!はマクロ。Do you know メタプログラミング？
-
-RustのマクロはCの`#define`ような単なる文字列の置換では無い。安全に使える。
-
-- 宣言的（declarative）マクロ
-- ３種類の手続き的 (procedural) マクロ
-    - deriveマクロ
-    - 属性マクロ
-    - 関数マクロ
-- 凝ったものを作ると黒魔術しがち
-    - RustのAST（抽象構文木: Abstract Syntax Tree）の知識が必要になる場合がある
-
-## よく使うマクロ
-
-- println!(): 引数を標準出力に出力
-- format!(): 文字列のフォーマット
-- assert_eq!(): テストで使う。第１引数と第２引数が不一致だとpanicする。
-- vec![]: Vec型の値を生成する。
-- #[derive()]: 型にトレイトの標準的な実装をする。`#[derive(Debug)]`など
-- panic!(): パニックする
-- todo!(): これを書いておくと、そのブロックの型解析をパスできる。
-- unimplemented!(): 挙動は`todo!`と同じ。
-- #[tokio::main]: プロジェクトを非同期処理に対応させる。
+[マクロ](./macro.md)
 
 ## テスト
 [サンプルプロジェクト](../../projects/test-sample)
@@ -417,25 +410,59 @@ mod.rs, `extern crate`キーワードを使う方法は古い方式です。い�
 - orphan rule
 - lexical scope と non-lexical scope    
     -  [Non-Lexical Lifetimes - Qiita](https://qiita.com/_EnumHack/items/8b6ecdeb52e69a4ff384)
-    
 
-簡易curlコマンドを作る
+# 演習
 
-- オプションなしで実行したらusageを表示
+
+## lsコマンドを作る
+
+ターミナルで`ls`コマンドを実行したことはありますか？リポジトリルートで`ls`を実行すると、以下のような出力が得られます。
+
+```
+$ ls
+Cargo.lock      Cargo.toml      src             target
+```
+
+これと同じ出力をする`myls`コマンドを作ってみましょう。`cargo new myls`でmylsプロジェクトを作りましょう。
+
+```
+$ ./target/debug/myls 
+Cargo.lock   Cargo.toml   src   target   
+```
+
+`myls`が出力するファイル・ディレクトリの順番・表示は`ls`と一致させなくて大丈夫です。引数なしで実行するとカレントディレクトリのファイル・ディレクトリを標準出力に出力するようにしましょう。
+<details>
+<summary>
+ヒント💡
+</summary>
+[std::fs](https://doc.rust-lang.org/std/fs/index.html)を使います。
+</details>
+
+
+それが出来たら、パスを引数で受け取り、そのパスのファイル・ディレクトリを標準出力に出力するようにしましょう。
+
+<details>
+<summary>
+ヒント💡
+</summary>
+[コマンドライン引数を受け付ける - The Rust Programming Language 日本語版](https://doc.rust-jp.rs/book-ja/ch12-01-accepting-command-line-arguments.html#%E5%BC%95%E6%95%B0%E3%81%AE%E5%80%A4%E3%82%92%E5%A4%89%E6%95%B0%E3%81%AB%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B)
+</details>
+
+
+## curlコマンドを作る
+
 - `コマンド <URL>` ならURLにGETでリクエストし、ステータスコード200が返ってきたらレスポンスを標準出力に表示
 - `コマンド -X POST <URL> -d <DATA>` でURLにPOSTでリクエストする。ステータスコード200が返ってきたらレスポンスを標準出力に表示
-- 自分でAPIのdocumentを読んだりサンプルコードを見ながら実装する
-- reqwest, clap クレートを使う
+- [reqwest](https://docs.rs/reqwest/latest/reqwest/), [clap](https://docs.rs/clap/latest/clap/) クレートを使う
 - 余裕があれば`-H “KEY:VALUE”` でヘッダを追加したり、クエリパラメータに対応したり、エラーハンドリングを追加してみる。
-- `-v`や`-vvv`相当のことがしたいなら、reqwestより低レイヤーのhyperを使わないできないと思われる。
+- オプションなしで実行したらusageを表示
 
-時間余ったらTUIアプリに挑戦するのも面白いかも。
 
-[ratatui-org/ratatui: Rust library that's all about cooking up terminal user interfaces (TUIs)](https://github.com/ratatui-org/ratatui)
+`cargo run -p print-server`を実行するとデバッグ用のアプリがローカルで起動します。
 
-- axumでアプリ作る
-    - ヘッダ・ペイロード・クエリパラメータ・メソッド・パスを標準出力
-    - GETはhello worldを返すだけ
-    - POSTはリクエストのフォーマットを判定してからオウム返し
-        - application/json ?
-
+```
+$ curl localhost:3000
+Hello from `GET /`
+$ curl -X POST localhost:3000
+Hello from `POST /`    
+``````
